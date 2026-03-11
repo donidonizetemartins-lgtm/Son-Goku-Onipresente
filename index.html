@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEMES BR COMMUNITY</title>
     
-    <!-- Scripts Firebase (Versão Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-storage-compat.js"></script>
-
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     
@@ -97,64 +92,57 @@
             display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
         }
         .modal-content { background: #0a110a; border: 1px solid var(--neon-green); padding: 20px; border-radius: 15px; width: 100%; max-width: 450px; max-height: 80vh; overflow-y: auto; }
-
         .comment-item { border-bottom: 1px solid var(--glass); padding: 10px 0; display: flex; gap: 10px; }
         .comment-item img { width: 25px; height: 25px; border-radius: 50%; }
         
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
         .rank-item { display: flex; align-items: center; gap: 15px; padding: 10px; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
-    <!-- SPLASH -->
     <div id="splash-screen">
         <div class="glitch-text">MEMES<br>BR<br>COMMUNITY</div>
-        <div class="progress-container">
-            <div class="progress-bar"></div>
-        </div>
+        <div class="progress-container"><div class="progress-bar"></div></div>
         <div class="by-goat">By: Goat</div>
     </div>
 
-    <!-- AUTH -->
     <div id="auth-screen">
         <div class="auth-card">
             <h2 style="margin-bottom: 20px; color: var(--neon-green);">IDENTIFIQUE-SE</h2>
-            <div class="profile-upload" onclick="document.getElementById('input-file').click()">
+            <div class="profile-upload" id="profile-trigger">
                 <i data-lucide="camera" id="upload-icon"></i>
                 <img id="preview-img" style="display:none">
             </div>
             <input type="file" id="input-file" hidden accept="image/*">
             <input type="text" id="username" placeholder="Nome de Usuário">
             <input type="password" id="password" placeholder="Senha">
-            <button class="btn" id="btn-auth" onclick="handleAuth()">Registrar / Login</button>
+            <button class="btn" id="btn-auth">Registrar / Login</button>
         </div>
     </div>
 
-    <!-- MAIN -->
     <div id="main-content">
         <header>
-            <div onclick="openModal('post-modal')" style="cursor:pointer"><i data-lucide="plus-square"></i></div>
+            <div id="btn-open-post" style="cursor:pointer"><i data-lucide="plus-square"></i></div>
             <div class="search-area">
                 <i data-lucide="search" size="18"></i>
-                <input type="text" id="search-input" placeholder="Pesquisar..." oninput="renderPosts()">
-                <i data-lucide="filter" id="filter-btn" size="18" onclick="toggleMemeFilter()" style="cursor:pointer; transition: 0.3s;"></i>
+                <input type="text" id="search-input" placeholder="Pesquisar...">
+                <i data-lucide="filter" id="filter-btn" size="18" style="cursor:pointer; transition: 0.3s;"></i>
             </div>
             <div style="display:flex; gap: 15px; cursor:pointer">
-                <i data-lucide="trophy" onclick="showRank()"></i>
-                <i data-lucide="shield-check" onclick="openModal('admin-modal')"></i>
+                <i data-lucide="trophy" id="btn-rank"></i>
+                <i data-lucide="shield-check" id="btn-admin"></i>
             </div>
         </header>
         <div class="feed" id="feed-container"></div>
     </div>
 
-    <!-- MODAL POSTAR -->
+    <!-- MODAIS -->
     <div id="post-modal" class="modal">
         <div class="modal-content">
             <div style="display:flex; justify-content: space-between; margin-bottom: 15px;">
                 <h3>Nova Postagem</h3>
-                <i data-lucide="x" onclick="closeModal('post-modal')" style="cursor:pointer"></i>
+                <i data-lucide="x" class="close-modal" data-target="post-modal" style="cursor:pointer"></i>
             </div>
             <textarea id="post-text" placeholder="No que está pensando?" style="width:100%; height:80px; background:black; color:white; border:1px solid var(--border); padding:10px; border-radius:10px; outline:none;"></textarea>
             <input type="file" id="post-file">
@@ -162,52 +150,51 @@
                 <option value="geral">Geral</option>
                 <option value="meme">Meme</option>
             </select>
-            <button class="btn" onclick="createPost()">POSTAR</button>
+            <button class="btn" id="btn-submit-post">POSTAR</button>
         </div>
     </div>
 
-    <!-- MODAL COMENTÁRIOS -->
     <div id="comment-modal" class="modal">
         <div class="modal-content">
             <div style="display:flex; justify-content: space-between; margin-bottom: 15px;">
                 <h3>Comentários</h3>
-                <i data-lucide="x" onclick="closeModal('comment-modal')" style="cursor:pointer"></i>
+                <i data-lucide="x" class="close-modal" data-target="comment-modal" style="cursor:pointer"></i>
             </div>
             <div id="comments-list" style="margin-bottom: 15px;"></div>
             <div style="display:flex; gap: 10px;">
                 <input type="text" id="new-comment" placeholder="Escreva um comentário..." style="margin:0;">
-                <button class="btn" style="width:auto; margin:0;" onclick="addComment()">OK</button>
+                <button class="btn" id="btn-submit-comment" style="width:auto; margin:0;">OK</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL RANKING -->
     <div id="rank-modal" class="modal">
         <div class="modal-content">
             <div style="display:flex; justify-content: space-between; margin-bottom: 15px;">
                 <h3>TOP 10 LENDAS</h3>
-                <i data-lucide="x" onclick="closeModal('rank-modal')" style="cursor:pointer"></i>
+                <i data-lucide="x" class="close-modal" data-target="rank-modal" style="cursor:pointer"></i>
             </div>
             <div id="rank-list"></div>
         </div>
     </div>
 
-    <!-- MODAL ADMIN -->
     <div id="admin-modal" class="modal">
         <div class="modal-content">
             <h3>PAINEL ADMIN</h3>
-            <input type="password" id="admin-code" placeholder="Código: ">
-            <button class="btn" onclick="checkAdmin()">ACESSAR</button>
+            <input type="password" id="admin-code" placeholder="Código: 2012">
+            <button class="btn" id="btn-login-admin">ACESSAR</button>
             <div id="admin-tools" style="display:none; margin-top:20px;">
                 <p style="color:red">MODO ADMIN ATIVO</p>
-                <button class="btn" style="background: #333; color:white" onclick="logoutAdmin()">SAIR</button>
+                <button class="btn" id="btn-logout-admin" style="background: #333; color:white">SAIR</button>
             </div>
-            <button class="btn" onclick="closeModal('admin-modal')" style="margin-top:10px; background: transparent; color:gray;">Fechar</button>
+            <button class="btn close-modal" data-target="admin-modal" style="margin-top:10px; background: transparent; color:gray;">Fechar</button>
         </div>
     </div>
 
-    <script>
-        // CONFIGURAÇÃO FIREBASE
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, setDoc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyB5GzJ3Lms_xtd6_9Rru9Bjmc-nCnz4iHM",
             authDomain: "songokuue.firebaseapp.com",
@@ -217,10 +204,9 @@
             appId: "1:981357296896:web:5f2bab8092d8e848ea07e5"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        // VARIÁVEIS DE ESTADO
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let users = [];
         let posts = [];
         let currentUser = null;
@@ -228,10 +214,21 @@
         let memeFilter = false;
         let currentPostId = null;
 
-        // INICIALIZAÇÃO
-        window.onload = () => {
+        // --- INICIALIZAÇÃO ---
+        window.addEventListener('load', () => {
             lucide.createIcons();
-            loadInitialData(); // Carregar dados do Firebase
+            
+            // Listeners em tempo real
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                users = snapshot.docs.map(d => d.data());
+            });
+
+            const qPosts = query(collection(db, "posts"), orderBy("id", "desc"));
+            onSnapshot(qPosts, (snapshot) => {
+                posts = snapshot.docs.map(d => ({ fid: d.id, ...d.data() }));
+                renderPosts();
+            });
+
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => {
@@ -239,21 +236,9 @@
                     document.getElementById('auth-screen').style.display = 'flex';
                 }, 500);
             }, 5000);
-        };
+        });
 
-        async function loadInitialData() {
-            // Ouvinte em tempo real para Usuários
-            db.collection("users").onSnapshot(snapshot => {
-                users = snapshot.docs.map(doc => doc.data());
-            });
-            // Ouvinte em tempo real para Posts
-            db.collection("posts").orderBy("id", "desc").onSnapshot(snapshot => {
-                posts = snapshot.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
-                renderPosts();
-            });
-        }
-
-        // AUTH
+        // --- AUTH LOGIC ---
         const usernameInput = document.getElementById('username');
         const previewImg = document.getElementById('preview-img');
         const uploadIcon = document.getElementById('upload-icon');
@@ -270,6 +255,7 @@
             }
         };
 
+        document.getElementById('profile-trigger').onclick = () => document.getElementById('input-file').click();
         document.getElementById('input-file').onchange = (e) => {
             const reader = new FileReader();
             reader.onload = () => {
@@ -280,7 +266,7 @@
             reader.readAsDataURL(e.target.files[0]);
         };
 
-        async function handleAuth() {
+        document.getElementById('btn-auth').onclick = async () => {
             const name = usernameInput.value;
             const pass = document.getElementById('password').value;
             const pic = previewImg.src;
@@ -292,28 +278,28 @@
                 currentUser = user;
             } else {
                 currentUser = { name, pass, pic, likesReceived: 0 };
-                await db.collection("users").doc(name).set(currentUser);
+                await setDoc(doc(db, "users", name), currentUser);
             }
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
-        }
+        };
 
-        // POSTS
-        async function createPost() {
+        // --- POSTS LOGIC ---
+        document.getElementById('btn-submit-post').onclick = async () => {
             const text = document.getElementById('post-text').value;
             const tag = document.getElementById('post-tag').value;
             const file = document.getElementById('post-file').files[0];
 
             let imageData = null;
             if (file) {
-                imageData = await new Promise(resolve => {
+                imageData = await new Promise(r => {
                     const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
+                    reader.onload = () => r(reader.result);
                     reader.readAsDataURL(file);
                 });
             }
 
-            const newPost = {
+            await addDoc(collection(db, "posts"), {
                 id: Date.now(),
                 author: currentUser.name,
                 authorPic: currentUser.pic,
@@ -323,13 +309,12 @@
                 likedBy: [],
                 comments: [],
                 image: imageData
-            };
+            });
 
-            await db.collection("posts").add(newPost);
             closeModal('post-modal');
             document.getElementById('post-text').value = '';
             document.getElementById('post-file').value = '';
-        }
+        };
 
         function renderPosts() {
             const container = document.getElementById('feed-container');
@@ -349,16 +334,16 @@
                             <span style="font-weight:bold">${post.author}</span>
                             <span class="tag-pill">${post.tag}</span>
                         </div>
-                        ${isAdmin ? `<i data-lucide="trash-2" onclick="deletePost('${post.firebaseId}')" style="color:red; cursor:pointer"></i>` : ''}
+                        ${isAdmin ? `<i data-lucide="trash-2" class="del-btn" data-id="${post.fid}" style="color:red; cursor:pointer"></i>` : ''}
                     </div>
                     <p>${post.content}</p>
                     ${post.image ? `<img src="${post.image}" class="post-img">` : ''}
                     <div class="post-actions">
-                        <div onclick="likePost('${post.firebaseId}')">
+                        <div class="like-btn" data-id="${post.fid}">
                             <i data-lucide="heart" style="${post.likedBy.includes(currentUser.name) ? 'fill:red; color:red' : ''}"></i>
                             <span>${post.likes}</span>
                         </div>
-                        <div onclick="openComments('${post.firebaseId}')">
+                        <div class="comm-btn" data-id="${post.fid}">
                             <i data-lucide="message-circle"></i>
                             <span>${post.comments.length}</span>
                         </div>
@@ -367,120 +352,113 @@
                 container.appendChild(div);
             });
             lucide.createIcons();
+            attachFeedEvents();
         }
 
-        // COMENTÁRIOS
-        function openComments(firebaseId) {
-            currentPostId = firebaseId;
-            const post = posts.find(p => p.firebaseId === firebaseId);
-            const list = document.getElementById('comments-list');
-            list.innerHTML = post.comments.length ? '' : '<p style="color:gray">Ninguém comentou ainda...</p>';
+        function attachFeedEvents() {
+            document.querySelectorAll('.like-btn').forEach(b => b.onclick = () => handleLike(b.dataset.id));
+            document.querySelectorAll('.comm-btn').forEach(b => b.onclick = () => openComments(b.dataset.id));
+            document.querySelectorAll('.del-btn').forEach(b => b.onclick = () => deletePost(b.dataset.id));
+        }
+
+        async function handleLike(fid) {
+            const post = posts.find(p => p.fid === fid);
+            let newLikes = post.likes;
+            let newLikedBy = [...post.likedBy];
+            const isLiking = !newLikedBy.includes(currentUser.name);
+
+            if (isLiking) {
+                newLikedBy.push(currentUser.name);
+                newLikes++;
+            } else {
+                newLikedBy = newLikedBy.filter(u => u !== currentUser.name);
+                newLikes--;
+            }
+
+            await updateDoc(doc(db, "posts", fid), { likes: newLikes, likedBy: newLikedBy });
             
+            const authRef = doc(db, "users", post.author);
+            const authDoc = await getDoc(authRef);
+            if(authDoc.exists()){
+                let total = authDoc.data().likesReceived || 0;
+                await updateDoc(authRef, { likesReceived: isLiking ? total + 1 : total - 1 });
+            }
+        }
+
+        // --- COMENTARIOS ---
+        function openComments(fid) {
+            currentPostId = fid;
+            const post = posts.find(p => p.fid === fid);
+            const list = document.getElementById('comments-list');
+            list.innerHTML = post.comments.length ? '' : '<p style="color:gray">Sem comentários...</p>';
             post.comments.forEach(c => {
-                list.innerHTML += `
-                    <div class="comment-item">
-                        <img src="${c.pic}">
-                        <div>
-                            <p style="font-weight:bold; font-size:0.8rem; color:var(--neon-green)">${c.user}</p>
-                            <p style="font-size:0.9rem">${c.text}</p>
-                        </div>
-                    </div>
-                `;
+                list.innerHTML += `<div class="comment-item"><img src="${c.pic}"><div><p style="font-weight:bold; font-size:0.8rem; color:var(--neon-green)">${c.user}</p><p style="font-size:0.9rem">${c.text}</p></div></div>`;
             });
             openModal('comment-modal');
         }
 
-        async function addComment() {
+        document.getElementById('btn-submit-comment').onclick = async () => {
             const input = document.getElementById('new-comment');
             if (!input.value) return;
-            const post = posts.find(p => p.firebaseId === currentPostId);
-            const newComments = [...post.comments, {
-                user: currentUser.name,
-                pic: currentUser.pic,
-                text: input.value
-            }];
-            await db.collection("posts").doc(currentPostId).update({ comments: newComments });
+            const post = posts.find(p => p.fid === currentPostId);
+            const newList = [...post.comments, { user: currentUser.name, pic: currentUser.pic, text: input.value }];
+            await updateDoc(doc(db, "posts", currentPostId), { comments: newList });
             input.value = '';
             openComments(currentPostId);
-        }
+        };
 
-        async function likePost(firebaseId) {
-            const post = posts.find(p => p.firebaseId === firebaseId);
-            let newLikes = post.likes;
-            let newLikedBy = [...post.likedBy];
-
-            if (newLikedBy.includes(currentUser.name)) {
-                newLikedBy = newLikedBy.filter(u => u !== currentUser.name);
-                newLikes--;
-            } else {
-                newLikedBy.push(currentUser.name);
-                newLikes++;
-            }
-
-            await db.collection("posts").doc(firebaseId).update({
-                likes: newLikes,
-                likedBy: newLikedBy
-            });
-            
-            // Atualizar likes totais do autor
-            const authorRef = db.collection("users").doc(post.author);
-            authorRef.get().then(doc => {
-                if(doc.exists) {
-                    let total = doc.data().likesReceived || 0;
-                    authorRef.update({ likesReceived: post.likedBy.includes(currentUser.name) ? total - 1 : total + 1 });
-                }
-            });
-        }
-
-        function toggleMemeFilter() {
+        // --- AUXILIARES E UI ---
+        document.getElementById('filter-btn').onclick = () => {
             memeFilter = !memeFilter;
-            const btn = document.getElementById('filter-btn');
-            btn.style.color = memeFilter ? "white" : "var(--neon-green)";
-            btn.style.background = memeFilter ? "var(--neon-green)" : "transparent";
-            btn.style.borderRadius = "50%";
+            const b = document.getElementById('filter-btn');
+            b.style.color = memeFilter ? "white" : "var(--neon-green)";
+            b.style.background = memeFilter ? "var(--neon-green)" : "transparent";
+            b.style.borderRadius = "50%";
             renderPosts();
-        }
+        };
 
-        function showRank() {
+        document.getElementById('btn-rank').onclick = () => {
             const list = document.getElementById('rank-list');
             list.innerHTML = '';
-            const topUsers = [...users].sort((a,b) => (b.likesReceived || 0) - (a.likesReceived || 0)).slice(0, 10);
-            topUsers.forEach((u, i) => {
-                list.innerHTML += `
-                    <div class="rank-item">
-                        <span style="color:var(--neon-green)">#${i+1}</span>
-                        <img src="${u.pic}" style="width:30px; height:30px; border-radius:50%">
-                        <span style="flex:1">${u.name}</span>
-                        <span>${u.likesReceived || 0} likes</span>
-                        ${isAdmin ? `<button onclick="banUser('${u.name}')" style="background:red; color:white; border:none; padding:2px 5px; border-radius:4px; font-size:10px; cursor:pointer">BAN</button>` : ''}
-                    </div>
-                `;
+            const top = [...users].sort((a,b) => (b.likesReceived || 0) - (a.likesReceived || 0)).slice(0, 10);
+            top.forEach((u, i) => {
+                list.innerHTML += `<div class="rank-item"><span style="color:var(--neon-green)">#${i+1}</span><img src="${u.pic}" style="width:30px; height:30px; border-radius:50%"><span style="flex:1">${u.name}</span><span>${u.likesReceived || 0} likes</span>${isAdmin ? `<button class="ban-user-btn" data-name="${u.name}" style="background:red; color:white; border:none; padding:2px 5px; border-radius:4px; font-size:10px; cursor:pointer">BAN</button>` : ''}</div>`;
             });
             openModal('rank-modal');
-        }
+            document.querySelectorAll('.ban-user-btn').forEach(b => b.onclick = () => banUser(b.dataset.name));
+        };
 
-        function checkAdmin() {
+        document.getElementById('btn-login-admin').onclick = () => {
             if (document.getElementById('admin-code').value === "2012") {
                 isAdmin = true;
                 document.getElementById('admin-tools').style.display = 'block';
                 renderPosts();
-                alert('Admin Ativado!');
-            } else { alert('Código Errado!'); }
-        }
+            } else alert('Código incorreto!');
+        };
 
-        function logoutAdmin() { isAdmin = false; document.getElementById('admin-tools').style.display = 'none'; renderPosts(); }
-        async function deletePost(fid) { await db.collection("posts").doc(fid).delete(); }
+        document.getElementById('btn-logout-admin').onclick = () => {
+            isAdmin = false;
+            document.getElementById('admin-tools').style.display = 'none';
+            renderPosts();
+        };
+
+        async function deletePost(fid) { await deleteDoc(doc(db, "posts", fid)); }
         async function banUser(name) {
             if(name === currentUser.name) return;
-            await db.collection("users").doc(name).delete();
-            // Opcional: deletar posts do banido
-            const userPosts = posts.filter(p => p.author === name);
-            userPosts.forEach(p => db.collection("posts").doc(p.firebaseId).delete());
-            showRank();
+            await deleteDoc(doc(db, "users", name));
+            posts.filter(p => p.author === name).forEach(p => deletePost(p.fid));
+            document.getElementById('btn-rank').click();
         }
+
+        // Modais
+        document.getElementById('btn-open-post').onclick = () => openModal('post-modal');
+        document.getElementById('btn-admin').onclick = () => openModal('admin-modal');
+        document.querySelectorAll('.close-modal').forEach(b => b.onclick = () => closeModal(b.dataset.target));
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        document.getElementById('search-input').oninput = renderPosts;
+
     </script>
 </body>
 </html>
