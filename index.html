@@ -95,9 +95,9 @@
         .msg-name { font-weight: bold; font-size: 0.95rem; color: var(--ssj4-gold); font-family: 'Orbitron', sans-serif; }
         .admin-delete-btn { color: var(--ssj4-red); font-size: 0.7rem; border: 1px solid var(--ssj4-red); padding: 2px; margin-left: 5px; border-radius: 3px; cursor: pointer; }
 
-        /* AREA DE INPUT - SUBI PARA NAO FICAR EMBAIXO NO MOBILE */
+        /* AQUI ESTÁ O AJUSTE PARA SUBIR O CHAT BEM MAIS */
         .chat-input-area { 
-            padding: 15px 15px 75px 15px; /* FOLGA GRANDE PARA SUBIR O CHAT */
+            padding: 15px 15px 120px 15px; /* Aumentado de 75px para 120px */
             background: var(--ssj4-dark); 
             display: flex; 
             gap: 10px; 
@@ -198,6 +198,7 @@
     </div>
 </div>
 
+<!-- SCRIPTS DO FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
 
@@ -210,8 +211,18 @@
       messagingSenderId: "188094830557",
       appId: "1:188094830557:web:451b0be3fd5646c32ac834"
     };
+
     let db;
-    try { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } catch(e) { console.log("Firebase Offline"); }
+    try { 
+        // Inicialização garantida
+        const app = firebase.initializeApp(firebaseConfig); 
+        db = firebase.firestore(app);
+        // Habilita persistência para não ficar offline em mobile
+        db.settings({ experimentalForceLongPolling: true }); 
+        console.log("Firebase Conectado com Sucesso!");
+    } catch(e) { 
+        console.error("Erro na conexão Firebase: ", e); 
+    }
 
     let currentUser = null;
     let isAdminAuthenticated = false;
@@ -263,6 +274,8 @@
                 const m = doc.data();
                 renderMsg(m.name, m.img, m.text, m.imageBase64, doc.id);
             });
+        }, (error) => {
+            console.error("Erro no Snapshot: ", error);
         });
     }
 
