@@ -13,13 +13,37 @@
             --ssj4-gold: #ffd700;
             --ssj4-black: #0a0a0a;
             --ssj4-dark: #111;
-            --glass: rgba(20, 20, 20, 0.9);
+            --glass: rgba(20, 20, 20, 0.95);
             --neon-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
             --border-futuristic: 1px solid rgba(255, 0, 0, 0.3);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
-        body { background-color: var(--ssj4-black); color: white; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; }
-        #mobile-container { width: 100%; max-width: 450px; height: 100vh; background: linear-gradient(135deg, #000 0%, #1a0000 100%); position: relative; border-left: 1px solid var(--ssj4-red); border-right: 1px solid var(--ssj4-red); overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* Ajuste para não deixar o navegador esconder o fundo */
+        html, body { 
+            background-color: var(--ssj4-black); 
+            color: white; 
+            overflow: hidden; 
+            height: 100%; 
+            width: 100vw; 
+            display: flex; 
+            justify-content: center;
+        }
+
+        #mobile-container { 
+            width: 100%; 
+            max-width: 450px; 
+            height: 100dvh; /* Altura dinâmica para mobile */
+            height: 100vh;
+            background: linear-gradient(135deg, #000 0%, #1a0000 100%); 
+            position: relative; 
+            border-left: 1px solid var(--ssj4-red); 
+            border-right: 1px solid var(--ssj4-red); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
         .svg-icon { width: 24px; height: 24px; fill: none; stroke: var(--ssj4-orange); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 2px var(--ssj4-orange)); }
         
         #splash-screen { position: absolute; inset: 0; z-index: 100; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1); }
@@ -36,28 +60,67 @@
         .auth-input { width: 80%; padding: 12px; margin: 10px 0; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--ssj4-dark-red); border-radius: 5px; color: white; outline: none; }
         .btn-ssj4 { width: 80%; padding: 15px; background: var(--ssj4-red); border: none; color: white; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-top: 10px; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); transition: 0.3s; }
         
-        /* CORREÇÃO DO CHAT INVISÍVEL - USANDO GRID PARA PRECISÃO */
-        #app-screen { display: none; grid-template-rows: 40% 60%; height: 100vh; width: 100%; }
+        /* CORREÇÃO DO LAYOUT - GRID PARA NÃO SUMIR O CHAT */
+        #app-screen { 
+            display: none; 
+            flex-direction: column;
+            height: 100%; 
+            width: 100%; 
+        }
         
-        .header { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60') center/cover; border-bottom: 2px solid var(--ssj4-red); width: 100%; }
+        .header { 
+            height: 35%; 
+            min-height: 200px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60') center/cover; 
+            border-bottom: 2px solid var(--ssj4-red); 
+        }
         .header-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); }
         .header-content { z-index: 2; text-align: center; }
         .top-icons { position: absolute; top: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; z-index: 3; }
-        .icon-btn { width: 44px; height: 44px; background: var(--glass); border: var(--border-futuristic); border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        /* CONTAINER DO CHAT FORÇADO A APARECER */
-        .chat-container { background: var(--ssj4-black); display: flex; flex-direction: column; border-top: 1px solid #222; overflow: hidden; position: relative; height: 100%; }
-        #chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; background: #000; }
-        .message { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border-left: 3px solid var(--ssj4-dark-red); color: white; }
+        .chat-container { 
+            flex: 1; /* O chat ocupa o que sobrar da tela */
+            background: var(--ssj4-black); 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        #chat-messages { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            scroll-behavior: smooth; 
+        }
+        .message { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border-left: 3px solid var(--ssj4-dark-red); }
         .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .msg-avatar { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--ssj4-gold); object-fit: cover; }
         .msg-name { font-weight: bold; font-size: 0.95rem; color: var(--ssj4-gold); font-family: 'Orbitron', sans-serif; }
         .admin-delete-btn { color: var(--ssj4-red); font-size: 0.7rem; border: 1px solid var(--ssj4-red); padding: 2px; margin-left: 5px; border-radius: 3px; cursor: pointer; }
 
-        .chat-input-area { padding: 10px; background: var(--ssj4-dark); display: flex; gap: 10px; align-items: center; border-top: 1px solid #333; min-height: 65px; }
+        /* AREA DE INPUT REFORÇADA PARA NÃO SUMIR */
+        .chat-input-area { 
+            padding: 15px; 
+            background: var(--ssj4-dark); 
+            display: flex; 
+            gap: 10px; 
+            align-items: center; 
+            border-top: 1px solid #333;
+            min-height: 70px;
+            z-index: 10;
+        }
         #chat-msg-input { flex: 1; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 5px; color: white; outline: none; }
 
-        .futuristic-panel { position: absolute; bottom: -100%; left: 0; width: 100%; height: 80%; background: var(--glass); backdrop-filter: blur(10px); z-index: 50; border-top: 2px solid var(--ssj4-orange); border-radius: 20px 20px 0 0; padding: 20px; transition: bottom 0.5s; }
+        .futuristic-panel { position: absolute; bottom: -100%; left: 0; width: 100%; height: 85%; background: var(--glass); backdrop-filter: blur(10px); z-index: 200; border-top: 2px solid var(--ssj4-orange); border-radius: 20px 20px 0 0; padding: 20px; transition: bottom 0.5s; }
         .futuristic-panel.active { bottom: 0; }
         .panel-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; margin-top: 20px;}
         .news-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border-left: 3px solid var(--ssj4-orange); position: relative; margin-bottom: 10px;}
@@ -121,14 +184,12 @@
             </div>
         </div>
 
-        <!-- PAINEL NEWS -->
         <div id="news-panel" class="futuristic-panel">
             <h3 style="color:var(--ssj4-gold)">NOTÍCIAS E ENQUETES</h3>
             <div id="news-content-list" class="panel-content"></div>
             <button class="btn-ssj4" style="width:100%" onclick="closePanels()">FECHAR</button>
         </div>
 
-        <!-- PAINEL ADMIN -->
         <div id="admin-panel" class="futuristic-panel">
             <h3 style="color:var(--ssj4-red)">PAINEL ADMIN</h3>
             <div class="panel-content">
@@ -162,19 +223,31 @@
     let isAdminAuthenticated = false;
     let selectedChatFileBase64 = null;
 
-    setTimeout(() => { document.getElementById('splash-screen').style.transform = 'translateY(-100%)'; document.getElementById('auth-screen').style.display = 'flex'; }, 5000);
+    setTimeout(() => { 
+        document.getElementById('splash-screen').style.transform = 'translateY(-100%)'; 
+        document.getElementById('auth-screen').style.display = 'flex'; 
+    }, 5000);
 
-    function toggleAuthMode() { const t = document.getElementById('auth-title'); t.innerText = t.innerText === "REGISTRAR" ? "LOGIN" : "REGISTRAR"; }
+    function toggleAuthMode() { 
+        const t = document.getElementById('auth-title'); 
+        t.innerText = t.innerText === "REGISTRAR" ? "LOGIN" : "REGISTRAR"; 
+    }
     
-    function previewImage(i) { if (i.files && i.files[0]) { let r = new FileReader(); r.onload = (e) => { document.getElementById('preview').src = e.target.result; }; r.readAsDataURL(i.files[0]); } }
+    function previewImage(i) { 
+        if (i.files && i.files[0]) { 
+            let r = new FileReader(); 
+            r.onload = (e) => { document.getElementById('preview').src = e.target.result; }; 
+            r.readAsDataURL(i.files[0]); 
+        } 
+    }
 
     function handleAuth() {
         const name = document.getElementById('user-name').value;
         if(name.length < 3) return alert("Nome curto!");
         currentUser = { name, img: document.getElementById('preview').src };
         document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('app-screen').style.display = 'grid';
-        addLocalMessage("SISTEMA", "https://cdn-icons-png.flaticon.com/512/9131/9131529.png", `Bem-vindo à comunidade do Onipresente, ${name}!`);
+        document.getElementById('app-screen').style.display = 'flex';
+        addLocalMessage("SISTEMA", "https://cdn-icons-png.flaticon.com/512/9131/9131529.png", `Bem-vindo, ${name}!`);
         if(db) { initChat(); initNews(); }
     }
 
@@ -191,7 +264,7 @@
     function initChat() {
         db.collection("mensagens").orderBy("timestamp", "asc").onSnapshot(s => {
             document.getElementById('chat-messages').innerHTML = "";
-            addLocalMessage("SISTEMA", "https://cdn-icons-png.flaticon.com/512/9131/9131529.png", `Bem-vindo à comunidade do Onipresente, ${currentUser.name}!`);
+            addLocalMessage("SISTEMA", "https://cdn-icons-png.flaticon.com/512/9131/9131529.png", `Canal conectado.`);
             s.forEach(doc => {
                 const m = doc.data();
                 renderMsg(m.name, m.img, m.text, m.imageBase64, doc.id);
@@ -220,11 +293,24 @@
         input.value = ""; selectedChatFileBase64 = null;
     }
 
-    function chatFileSelected() { const f = document.getElementById('chat-file').files[0]; if(f) { const r = new FileReader(); r.onload = (e) => { selectedChatFileBase64 = e.target.result; alert("Imagem pronta!"); }; r.readAsDataURL(f); } }
+    function chatFileSelected() { 
+        const f = document.getElementById('chat-file').files[0]; 
+        if(f) { 
+            const r = new FileReader(); 
+            r.onload = (e) => { 
+                selectedChatFileBase64 = e.target.result; 
+                alert("Imagem pronta para envio!"); 
+            }; 
+            r.readAsDataURL(f); 
+        } 
+    }
 
     function openNews() { closePanels(); document.getElementById('news-panel').classList.add('active'); }
     function toggleAdminPanel() { closePanels(); document.getElementById('admin-panel').classList.add('active'); }
-    function closePanels() { document.getElementById('news-panel').classList.remove('active'); document.getElementById('admin-panel').classList.remove('active'); }
+    function closePanels() { 
+        document.getElementById('news-panel').classList.remove('active'); 
+        document.getElementById('admin-panel').classList.remove('active'); 
+    }
 
     function checkAdminPass() {
         if(document.getElementById('admin-pass-input').value === "2012") {
